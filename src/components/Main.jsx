@@ -12,20 +12,12 @@ function Main() {
       console.log("Connected to the server");
     });
 
-    socket.on("message", (data) => {
-      console.log(data);
-    });
-
-    socket.on("new_client", (data) => {
-      console.log(data);
-    });
-
     socket.on("disconnect", () => {
       console.log("Disconnected from the server");
     });
 
     return () => socket.off();
-  },);
+  });
 
   return (
     <div>

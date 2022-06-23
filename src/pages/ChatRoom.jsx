@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import SocketContext from "../context/socket";
 
@@ -6,6 +6,14 @@ function ChatRoom() {
   const socket = useContext(SocketContext);
   const params = useParams();
   const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    socket.on("new_message", (data) => {
+      console.log(data);
+    });
+
+    return () => socket.off();
+  });
 
   function leaveRoom(roomName) {
     socket.emit("leave_room", roomName);
@@ -18,7 +26,11 @@ function ChatRoom() {
 
   function createMessageOnClick() {
     if (message !== "") {
-      socket.emit("message", message);
+      const data = JSON.stringify({
+        roomName: params.roomId,
+        message: message,
+      });
+      socket.emit("message", data);
       setMessage("");
     }
   }

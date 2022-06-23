@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import SocketContext from "../context/socket";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
@@ -12,6 +12,15 @@ function Home() {
   const [roomName, setRoomName] = useState("");
   const navigate = useNavigate();
 
+  useEffect(() => {
+    socket.emit("get_rooms");
+    socket.on("all_rooms", (data) => {
+      setChatRooms(data);
+    });
+
+    return () => socket.off();
+  });
+
   function handleRoomChange(event) {
     const value = event.target.value;
     setRoomName(value);
@@ -19,7 +28,7 @@ function Home() {
 
   function createRoomOnClick() {
     if (roomName !== "") {
-      socket.emit("join_room", roomName);
+      socket.emit("create_room", roomName);
       setChatRooms((prevItems) => {
         return [
           ...prevItems,
@@ -29,13 +38,13 @@ function Home() {
         ];
       });
       setRoomName("");
-      return navigate (`/chatroom/${roomName}`);
+      return navigate(`/chatroom/${roomName}`);
     }
   }
 
   function createRoomOnEnter(event) {
     if (event.key === "Enter" && roomName !== "") {
-      socket.emit("join_room", roomName);
+      socket.emit("create_room", roomName);
       setChatRooms((prevItems) => {
         return [
           ...prevItems,
@@ -45,7 +54,7 @@ function Home() {
         ];
       });
       setRoomName("");
-      return navigate (`/chatroom/${roomName}`);
+      return navigate(`/chatroom/${roomName}`);
     }
   }
 
