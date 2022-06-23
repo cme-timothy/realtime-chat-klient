@@ -13,13 +13,21 @@ function Home() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    socket.emit("get_rooms");
     socket.on("all_rooms", (data) => {
       setChatRooms(data);
     });
 
     return () => socket.off();
   });
+
+  useEffect(() => {
+    socket.emit("get_rooms");
+    socket.on("all_rooms", (data) => {
+      setChatRooms(data);
+    });
+
+    return () => socket.off();
+  }, []);
 
   function handleRoomChange(event) {
     const value = event.target.value;
@@ -38,6 +46,7 @@ function Home() {
         ];
       });
       setRoomName("");
+      socket.emit("get_rooms");
       return navigate(`/chatroom/${roomName}`);
     }
   }
@@ -84,7 +93,7 @@ function Home() {
         return (
           <ChatRoomLink
             key={index}
-            roomName={data.roomName}
+            roomName={data.name}
             socket={socket}
             keyId={index}
           />
