@@ -10,16 +10,10 @@ function Home() {
   const socket = useContext(SocketContext);
   const [chatRooms, setChatRooms] = useRecoilState(rooms);
   const [roomName, setRoomName] = useState("");
+  const [username, setUsername] = useState("");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    socket.on("all_rooms", (data) => {
-      setChatRooms(data);
-    });
-
-    return () => socket.off();
-  });
-
+  // get all rooms at start
   useEffect(() => {
     socket.emit("get_rooms");
     socket.on("all_rooms", (data) => {
@@ -28,6 +22,15 @@ function Home() {
 
     return () => socket.off();
   }, []);
+
+  // get all rooms continuously
+  useEffect(() => {
+    socket.on("all_rooms", (data) => {
+      setChatRooms(data);
+    });
+
+    return () => socket.off();
+  });
 
   function handleRoomChange(event) {
     const value = event.target.value;
@@ -67,6 +70,23 @@ function Home() {
     }
   }
 
+  function handleUsernameChange(event) {
+    const value = event.target.value;
+    setUsername(value);
+  }
+
+  function createUsernameOnClick() {
+    if (username !== "") {
+      socket.emit("create_user", username);
+    }
+  }
+
+  function createUsernameOnEnter(event) {
+    if (event.key === "Enter" && username !== "") {
+      socket.emit("create_user", username);
+    }
+  }
+
   return (
     <div>
       <Helmet>
@@ -78,6 +98,15 @@ function Home() {
         public rooms or private rooms. Join or create a chat room and be chatty
         &#128540;
       </h2>
+      <input
+        className="inputBox"
+        placeholder="..."
+        type="text"
+        onChange={handleUsernameChange}
+        onKeyDown={createUsernameOnEnter}
+        value={username}
+      />
+      <button onClick={createUsernameOnClick}>Create name</button>
       <input
         className="inputBox"
         placeholder="..."
