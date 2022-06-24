@@ -3,14 +3,14 @@ import SocketContext from "../context/socket";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useRecoilState } from "recoil";
-import { rooms } from "../Recoil/rooms/atom";
+import { user } from "../Recoil/user/atom";
 import ChatRoomLink from "../components/chatRoomLink";
 
 function Home() {
   const socket = useContext(SocketContext);
-  const [chatRooms, setChatRooms] = useRecoilState(rooms);
+  const [chatRooms, setChatRooms] = useState([]);
   const [roomName, setRoomName] = useState("");
-  const [username, setUsername] = useState("");
+  const [username, setUsername] = useRecoilState(user);
   const navigate = useNavigate();
 
   // get all rooms at start
