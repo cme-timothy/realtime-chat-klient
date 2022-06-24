@@ -28,7 +28,7 @@ function Home() {
     socket.on("all_rooms", (data) => {
       setChatRooms(data);
     });
-
+    console.log(chatRooms);
     return () => socket.off();
   });
 
@@ -40,14 +40,6 @@ function Home() {
   function createRoomOnClick() {
     if (roomName !== "") {
       socket.emit("create_room", roomName);
-      setChatRooms((prevItems) => {
-        return [
-          ...prevItems,
-          {
-            roomName: roomName,
-          },
-        ];
-      });
       setRoomName("");
       socket.emit("get_rooms");
       return navigate(`/chatroom/${roomName}`);
@@ -57,14 +49,6 @@ function Home() {
   function createRoomOnEnter(event) {
     if (event.key === "Enter" && roomName !== "") {
       socket.emit("create_room", roomName);
-      setChatRooms((prevItems) => {
-        return [
-          ...prevItems,
-          {
-            roomName: roomName,
-          },
-        ];
-      });
       setRoomName("");
       return navigate(`/chatroom/${roomName}`);
     }
@@ -120,12 +104,7 @@ function Home() {
       <h3>All available rooms:</h3>
       {chatRooms.map((data, index) => {
         return (
-          <ChatRoomLink
-            key={index}
-            roomName={data.name}
-            socket={socket}
-            keyId={index}
-          />
+          <ChatRoomLink key={index} roomName={data.room} socket={socket} />
         );
       })}
     </div>
