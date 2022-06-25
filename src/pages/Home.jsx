@@ -26,13 +26,12 @@ function Home() {
 
   // recieve new rooms from other users
   useEffect(() => {
-    socket.on("all_rooms", (data) => {
-      const parsedData = JSON.parse(data);
+    socket.on("new_room", (data) => {
       setChatRooms((prevItems) => {
         return [
           ...prevItems,
           {
-            room: parsedData.room,
+            room: data,
           },
         ];
       });
@@ -49,8 +48,15 @@ function Home() {
   function createRoomOnClick() {
     if (roomName !== "") {
       socket.emit("create_room", roomName);
+      setChatRooms((prevItems) => {
+        return [
+          ...prevItems,
+          {
+            room: roomName,
+          },
+        ];
+      });
       setRoomName("");
-      socket.emit("get_rooms");
       return navigate(`/chatroom/${roomName}`);
     }
   }
@@ -58,6 +64,14 @@ function Home() {
   function createRoomOnEnter(event) {
     if (event.key === "Enter" && roomName !== "") {
       socket.emit("create_room", roomName);
+      setChatRooms((prevItems) => {
+        return [
+          ...prevItems,
+          {
+            room: roomName,
+          },
+        ];
+      });
       setRoomName("");
       return navigate(`/chatroom/${roomName}`);
     }
