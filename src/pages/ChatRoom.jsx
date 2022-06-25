@@ -19,10 +19,11 @@ function ChatRoom() {
       const parsedData = JSON.parse(data);
       setAllMessages(parsedData);
     });
+
     return () => socket.off();
   }, []);
 
-  // recieve messages from other users
+  // recieve new messages from other users
   useEffect(() => {
     socket.on("new_message", (data) => {
       const parsedData = JSON.parse(data);
@@ -31,7 +32,7 @@ function ChatRoom() {
           ...prevItems,
           {
             message: parsedData.message,
-            room: parsedData.message,
+            room: parsedData.room,
             username: parsedData.username,
             timestamp: parsedData.timestamp,
           },

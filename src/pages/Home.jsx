@@ -13,22 +13,31 @@ function Home() {
   const [username, setUsername] = useRecoilState(user);
   const navigate = useNavigate();
 
-  // get all rooms at start
+  // get all rooms at start and when page refreshes
   useEffect(() => {
     socket.emit("get_rooms");
     socket.on("all_rooms", (data) => {
-      setChatRooms(data);
+      const parsedData = JSON.parse(data);
+      setChatRooms(parsedData);
     });
 
     return () => socket.off();
   }, []);
 
-  // get all rooms continuously
+  // recieve new rooms from other users
   useEffect(() => {
     socket.on("all_rooms", (data) => {
-      setChatRooms(data);
+      const parsedData = JSON.parse(data);
+      setChatRooms((prevItems) => {
+        return [
+          ...prevItems,
+          {
+            room: parsedData.room,
+          },
+        ];
+      });
     });
-    console.log(chatRooms);
+
     return () => socket.off();
   });
 
