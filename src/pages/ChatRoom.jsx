@@ -12,6 +12,7 @@ function ChatRoom() {
   const [allMessages, setAllMessages] = useState([]);
   const username = useRecoilValue(user);
 
+  // get all messages at start and when page refreshes
   useEffect(() => {
     socket.emit("get_messages", params.roomId);
     socket.on("all_messages", (data) => {
@@ -21,6 +22,7 @@ function ChatRoom() {
     return () => socket.off();
   }, []);
 
+  // recieve messages from other users
   useEffect(() => {
     socket.on("new_message", (data) => {
       const parsedData = JSON.parse(data);
