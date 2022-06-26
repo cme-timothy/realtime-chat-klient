@@ -14,7 +14,6 @@ function ChatRoomLink(props) {
       username: username,
     });
     socket.emit("join_room", data);
-    console.log(data);
   }
 
   return (
