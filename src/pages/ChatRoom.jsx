@@ -44,6 +44,17 @@ function ChatRoom() {
     return () => socket.off();
   });
 
+  // recieve users offline from other users
+  useEffect(() => {
+    socket.on("user_offline", (data) => {
+      setAllUsersOnline(
+        allUsersOnline.filter((user) => user.username !== data)
+      );
+    });
+
+    return () => socket.off();
+  });
+
   // recieve new messages from other users
   useEffect(() => {
     socket.on("new_message", (data) => {
