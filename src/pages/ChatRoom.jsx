@@ -14,7 +14,7 @@ function ChatRoom() {
   const username = useRecoilValue(user);
   const [allUsersOnline, setAllUsersOnline] = useState([]);
 
-  // get all users online and room messages at start
+  // get all users who are online in the room and all room messages at start
   useEffect(() => {
     socket.emit("get_room_data", params.roomId);
     socket.on("all_room_data", (onlineData, messagesData) => {
@@ -27,7 +27,7 @@ function ChatRoom() {
     return () => socket.off();
   }, []);
 
-  // recieve new online users from other users
+  // recieve new users who join the room
   useEffect(() => {
     socket.on("new_user_online", (data) => {
       setAllUsersOnline((prevItems) => {
@@ -44,7 +44,7 @@ function ChatRoom() {
     return () => socket.off();
   });
 
-  // recieve users offline from other users
+  // delete users from th room who have left the room
   useEffect(() => {
     socket.on("user_offline", (data) => {
       setAllUsersOnline(
@@ -55,7 +55,7 @@ function ChatRoom() {
     return () => socket.off();
   });
 
-  // recieve new messages from other users
+  // recieve new messages from other users in the room
   useEffect(() => {
     socket.on("new_message", (data) => {
       const parsedData = JSON.parse(data);
