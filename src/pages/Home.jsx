@@ -9,7 +9,7 @@ import ChatRoomLink from "../components/chatRoomLink";
 function Home() {
   const socket = useContext(SocketContext);
   const [chatRooms, setChatRooms] = useState([]);
-  const [roomName, setRoomName] = useState("");
+  const [room, setRoom] = useState("");
   const [username, setUsername] = useRecoilState(user);
   const navigate = useNavigate();
 
@@ -42,38 +42,38 @@ function Home() {
 
   function handleRoomChange(event) {
     const value = event.target.value;
-    setRoomName(value);
+    setRoom(value);
   }
 
   function createRoomOnClick() {
-    if (roomName !== "") {
-      socket.emit("create_room", roomName);
+    if (room !== "") {
+      socket.emit("create_room", room);
       setChatRooms((prevItems) => {
         return [
           ...prevItems,
           {
-            room: roomName,
+            room: room,
           },
         ];
       });
-      setRoomName("");
-      return navigate(`/chatroom/${roomName}`);
+      setRoom("");
+      return navigate(`/chatroom/${room}`);
     }
   }
 
   function createRoomOnEnter(event) {
-    if (event.key === "Enter" && roomName !== "") {
-      socket.emit("create_room", roomName);
+    if (event.key === "Enter" && room !== "") {
+      socket.emit("create_room", room);
       setChatRooms((prevItems) => {
         return [
           ...prevItems,
           {
-            room: roomName,
+            room: room,
           },
         ];
       });
-      setRoomName("");
-      return navigate(`/chatroom/${roomName}`);
+      setRoom("");
+      return navigate(`/chatroom/${room}`);
     }
   }
 
@@ -120,15 +120,13 @@ function Home() {
         type="text"
         onChange={handleRoomChange}
         onKeyDown={createRoomOnEnter}
-        value={roomName}
+        value={room}
       />
       <button onClick={createRoomOnClick}>Create room</button>
 
       <h3>All available rooms:</h3>
       {chatRooms.map((data, index) => {
-        return (
-          <ChatRoomLink key={index} roomName={data.room} socket={socket} />
-        );
+        return <ChatRoomLink key={index} room={data.room} />;
       })}
     </div>
   );
