@@ -56,7 +56,11 @@ function Home() {
 
   function createRoomOnClick() {
     if (room !== "") {
-      socket.emit("create_room", room);
+      const stringifyData = JSON.stringify({
+        room: room,
+        username: username,
+      });
+      socket.emit("create_room", stringifyData);
       setChatRooms((prevItems) => {
         return [
           ...prevItems,
@@ -72,7 +76,11 @@ function Home() {
 
   function createRoomOnEnter(event) {
     if (event.key === "Enter" && room !== "") {
-      socket.emit("create_room", room);
+      const stringifyData = JSON.stringify({
+        room: room,
+        username: username,
+      });
+      socket.emit("create_room", stringifyData);
       setChatRooms((prevItems) => {
         return [
           ...prevItems,
