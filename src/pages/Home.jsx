@@ -24,7 +24,7 @@ function Home() {
     return () => socket.off();
   }, []);
 
-  // recieve new rooms from other users
+  // recieve new rooms
   useEffect(() => {
     socket.on("new_room", (data) => {
       setChatRooms((prevItems) => {
@@ -35,6 +35,15 @@ function Home() {
           },
         ];
       });
+    });
+
+    return () => socket.off();
+  });
+
+  // remove rooms
+  useEffect(() => {
+    socket.on("room_deleted", (data) => {
+      setChatRooms(chatRooms.filter((room) => room.room !== data));
     });
 
     return () => socket.off();
