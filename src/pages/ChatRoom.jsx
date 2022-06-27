@@ -75,9 +75,56 @@ function ChatRoom() {
     return () => socket.off();
   });
 
+  // indikator for users who are typing in the room
+  useEffect(() => {
+    socket.on("user_typing", (data) => {
+      const parsedData = JSON.parse(data);
+      setAllUsersOnline(
+        allUsersOnline.filter((users) => users.username !== parsedData.username)
+      );
+      setAllUsersOnline((prevItems) => {
+        return [
+          {
+            room: params.roomId,
+            username: parsedData.username,
+            typing: "typing",
+          },
+          ...prevItems,
+        ];
+      });
+    });
+
+    return () => socket.off();
+  });
+
+  // indikator for users who delete their message before sending in the room
+  useEffect(() => {
+    socket.on("user_regret", (data) => {
+      const parsedData = JSON.parse(data);
+      setAllUsersOnline(
+        allUsersOnline.map((users) =>
+          users.username === parsedData.username
+            ? { ...users, typing: "" }
+            : users
+        )
+      );
+    });
+
+    return () => socket.off();
+  });
+
   function handleMessageChange(event) {
     const value = event.target.value;
     setMessage(value);
+    const data = JSON.stringify({
+      room: params.roomId,
+      username: username,
+    });
+    if (value === "") {
+      socket.emit("no_message", data);
+    } else {
+      socket.emit("typing_message", data);
+    }
   }
 
   function createMessageOnClick() {
@@ -163,7 +210,9 @@ function ChatRoom() {
       />
       <button onClick={createMessageOnClick}>Send message</button>
       {allUsersOnline.map((data, index) => {
-        return <Online key={index} username={data.username} />;
+        return (
+          <Online key={index} username={data.username} typing={data.typing} />
+        );
       })}
     </div>
   );
