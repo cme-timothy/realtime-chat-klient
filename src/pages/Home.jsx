@@ -123,7 +123,6 @@ function Home() {
         &#128540;
       </h2>
       <input
-        className="inputBox"
         placeholder="..."
         type="text"
         onChange={handleUsernameChange}
@@ -132,7 +131,6 @@ function Home() {
       />
       <button onClick={createUsernameOnClick}>Create name</button>
       <input
-        className="inputBox"
         placeholder="..."
         type="text"
         onChange={handleRoomChange}

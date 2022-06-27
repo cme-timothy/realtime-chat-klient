@@ -5,6 +5,7 @@ import Message from "../components/Message";
 import Online from "../components/Online";
 import { useRecoilValue } from "recoil";
 import { user } from "../Recoil/user/atom";
+import Emoji from "react-emoji-render";
 
 function ChatRoom() {
   const socket = useContext(SocketContext);
@@ -185,6 +186,10 @@ function ChatRoom() {
     socket.emit("leave_room", data);
   }
 
+  function addEmoji(emoji) {
+    setMessage(`${message}${emoji}`);
+  }
+
   return (
     <div>
       <Link key={params.roomId} to={"/"}>
@@ -201,7 +206,6 @@ function ChatRoom() {
         );
       })}
       <input
-        className="inputBox"
         placeholder="..."
         type="text"
         onChange={handleMessageChange}
@@ -209,6 +213,20 @@ function ChatRoom() {
         value={message}
       />
       <button onClick={createMessageOnClick}>Send message</button>
+      <Emoji text=":thumbs_up:" onClick={() => addEmoji(":thumbs_up:")} />
+      <Emoji text=":thumbs_down:" onClick={() => addEmoji(":thumbs_down:")} />
+      <Emoji text=":wave:" onClick={() => addEmoji(":wave:")} />
+      <Emoji text=":slight_smile:" onClick={() => addEmoji(":slight_smile:")} />
+      <Emoji
+        text=":grinning_face:"
+        onClick={() => addEmoji(":grinning_face:")}
+      />
+      <Emoji
+        text=":slightly_frowning_face:"
+        onClick={() => addEmoji(":slightly_frowning_face:")}
+      />
+      <Emoji text=":crying_face:" onClick={() => addEmoji(":crying_face:")} />
+      <Emoji text=":heart:" onClick={() => addEmoji(":heart:")} />
       {allUsersOnline.map((data, index) => {
         return (
           <Online key={index} username={data.username} typing={data.typing} />

@@ -1,8 +1,10 @@
+import Emoji from "react-emoji-render";
+
 function Message(props) {
   return (
     <div>
       <h4>{props.username}</h4>
-      <h4>{props.message}</h4>
+      <Emoji text={props.message} />
       <h4>{props.timestamp}</h4>
     </div>
   );
