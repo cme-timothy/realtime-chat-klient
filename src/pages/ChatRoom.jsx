@@ -44,7 +44,7 @@ function ChatRoom() {
     return () => socket.off();
   });
 
-  // delete users from th room who have left the room
+  // delete users from the room who have left the room
   useEffect(() => {
     socket.on("user_offline", (data) => {
       setAllUsersOnline(
