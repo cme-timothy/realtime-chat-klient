@@ -9,11 +9,11 @@ function ChatRoomLink(props) {
   const username = useRecoilValue(user);
 
   function joinRoomOnClick() {
-    const data = JSON.stringify({
+    const stringifyData = JSON.stringify({
       room: props.room,
       username: username,
     });
-    socket.emit("join_room", data);
+    socket.emit("join_room", stringifyData);
   }
 
   return (

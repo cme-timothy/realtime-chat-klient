@@ -3,7 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import SocketContext from "../context/socket";
 import Message from "../components/Message";
 import Online from "../components/Online";
-import { useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import { user } from "../Recoil/user/atom";
 import Emoji from "react-emoji-render";
 
@@ -12,17 +12,19 @@ function ChatRoom() {
   const params = useParams();
   const [message, setMessage] = useState("");
   const [allMessages, setAllMessages] = useState([]);
-  const username = useRecoilValue(user);
+  const [username, setUsername] = useRecoilState(user);
   const [allUsersOnline, setAllUsersOnline] = useState([]);
 
   // get all users who are online in the room and all room messages at start
   useEffect(() => {
     socket.emit("get_room_data", params.roomId);
-    socket.on("all_room_data", (onlineData, messagesData) => {
+    socket.on("all_room_data", (onlineData, messagesData, userData) => {
       const parsedOnlineData = JSON.parse(onlineData);
       setAllUsersOnline(parsedOnlineData);
       const parsedMessagesData = JSON.parse(messagesData);
       setAllMessages(parsedMessagesData);
+      const parsedUserData = JSON.parse(userData);
+      setUsername(parsedUserData.username);
     });
 
     return () => socket.off();
