@@ -1,15 +1,18 @@
+import { Avatar, Flex, Text } from "@chakra-ui/react";
+
 function Online(props) {
   return (
-    <div>
-      <h4
+    <Flex w="100%" h="80px" align="center">
+      <Avatar src="" mr="15px" ml="10px" />
+      <Text
         onClick={() => {
           props.privateMessage(props.username);
         }}
       >
         {props.username}
-      </h4>
-      <h5>{props.typing}</h5>
-    </div>
+      </Text>
+      <Text>{props.typing}</Text>
+    </Flex>
   );
 }
 

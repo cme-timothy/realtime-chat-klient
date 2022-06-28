@@ -6,6 +6,8 @@ import Online from "../components/Online";
 import { useRecoilState } from "recoil";
 import { user } from "../Recoil/user/atom";
 import Emoji from "react-emoji-render";
+import { Flex, Button, Input } from "@chakra-ui/react";
+import Profile from "../components/Profile";
 
 function ChatRoom() {
   const socket = useContext(SocketContext);
@@ -153,26 +155,49 @@ function ChatRoom() {
   function createMessageOnClick(directMessage) {
     if (message !== "") {
       const timestamp = new Date().toLocaleString();
-      setAllMessages((prevItems) => {
-        return [
-          ...prevItems,
-          {
-            directMessage: `Private message to: ${directMessage}`,
-            message: message,
-            room: params.roomId,
-            username: username,
-            timestamp: timestamp,
-          },
-        ];
-      });
-      const data = JSON.stringify({
-        message: message,
-        room: params.roomId,
-        username: username,
-        timestamp: timestamp,
-      });
-      socket.emit("add_message", data, directMessage);
+      const name = typeof directMessage;
+      if (name === "string") {
+        setAllMessages((prevItems) => {
+          return [
+            ...prevItems,
+            {
+              directMessage: `Private message to: ${directMessage}`,
+              message: message,
+              room: params.roomId,
+              username: username,
+              timestamp: timestamp,
+            },
+          ];
+        });
+        const data = JSON.stringify({
+          message: message,
+          room: params.roomId,
+          username: username,
+          timestamp: timestamp,
+        });
+        socket.emit("add_message", data, directMessage);
+      } else {
+        setAllMessages((prevItems) => {
+          return [
+            ...prevItems,
+            {
+              message: message,
+              room: params.roomId,
+              username: username,
+              timestamp: timestamp,
+            },
+          ];
+        });
+        const data = JSON.stringify({
+          message: message,
+          room: params.roomId,
+          username: username,
+          timestamp: timestamp,
+        });
+        socket.emit("add_message", data);
+      }
       setMessage("");
+      console.log("inside");
     }
   }
 
@@ -219,54 +244,103 @@ function ChatRoom() {
   }
 
   return (
-    <div>
-      <Link key={params.roomId} to={"/"}>
-        <button onClick={() => leaveRoom(params.roomId)}>Leave room</button>
-      </Link>
-      {allMessages.map((data, index) => {
-        return (
-          <Message
-            key={index}
-            private={data.directMessage}
-            message={data.message}
-            username={data.username}
-            timestamp={data.timestamp}
+    <Flex bg="yellow.50">
+      <Flex
+        direction="column"
+        w="300px"
+        h="100vh"
+        align="center"
+        borderRight="1px solid"
+        borderColor="blue.100"
+      >
+        <Profile />
+        <Link key={params.roomId} to={"/"}>
+          <Button w="80%" m={3} onClick={() => leaveRoom(params.roomId)}>
+            Leave room
+          </Button>
+        </Link>
+        {allUsersOnline.map((data, index) => {
+          return (
+            <Online
+              key={index}
+              username={data.username}
+              typing={data.typing}
+              privateMessage={createMessageOnClick}
+            />
+          );
+        })}
+      </Flex>
+      <Flex w="80%" direction="column">
+        {allMessages.map((data, index) => {
+          return (
+            <Message
+              key={index}
+              private={data.directMessage}
+              message={data.message}
+              username={data.username}
+              timestamp={data.timestamp}
+            />
+          );
+        })}
+        <Flex flex={1}></Flex>
+        <Flex>
+          <Button bg={0} ml={5} pl={1} pr={1} size="sm">
+            <Emoji text=":thumbs_up:" onClick={() => addEmoji(":thumbs_up:")} />
+          </Button>
+          <Button bg={0} pl={1} pr={1} size="sm">
+            <Emoji
+              text=":thumbs_down:"
+              onClick={() => addEmoji(":thumbs_down:")}
+            />
+          </Button>
+          <Button bg={0} pl={1} pr={1} size="sm">
+            <Emoji text=":wave:" onClick={() => addEmoji(":wave:")} />
+          </Button>
+          <Button bg={0} pl={1} pr={1} size="sm">
+            <Emoji
+              text=":slight_smile:"
+              onClick={() => addEmoji(":slight_smile:")}
+            />
+          </Button>
+          <Button bg={0} pl={1} pr={1} size="sm">
+            <Emoji
+              text=":grinning_face:"
+              onClick={() => addEmoji(":grinning_face:")}
+            />
+          </Button>
+          <Button bg={0} pl={1} pr={1} size="sm">
+            <Emoji
+              text=":slightly_frowning_face:"
+              onClick={() => addEmoji(":slightly_frowning_face:")}
+            />
+          </Button>
+          <Button bg={0} pl={1} pr={1} size="sm">
+            <Emoji
+              text=":crying_face:"
+              onClick={() => addEmoji(":crying_face:")}
+            />
+          </Button>
+          <Button bg={0} mr={5} pl={1} pr={1} size="sm">
+            <Emoji text=":heart:" onClick={() => addEmoji(":heart:")} />
+          </Button>
+        </Flex>
+        <Flex ml={3} mr={3} mb={3}>
+          <Input
+            _hover={{ borderColor: "blue.300" }}
+            mr={3}
+            borderColor="blue.100"
+            placeholder="..."
+            type="text"
+            onChange={handleMessageChange}
+            onKeyDown={createMessageOnEnter}
+            value={message}
           />
-        );
-      })}
-      <input
-        placeholder="..."
-        type="text"
-        onChange={handleMessageChange}
-        onKeyDown={createMessageOnEnter}
-        value={message}
-      />
-      <button onClick={createMessageOnClick}>Send message</button>
-      <Emoji text=":thumbs_up:" onClick={() => addEmoji(":thumbs_up:")} />
-      <Emoji text=":thumbs_down:" onClick={() => addEmoji(":thumbs_down:")} />
-      <Emoji text=":wave:" onClick={() => addEmoji(":wave:")} />
-      <Emoji text=":slight_smile:" onClick={() => addEmoji(":slight_smile:")} />
-      <Emoji
-        text=":grinning_face:"
-        onClick={() => addEmoji(":grinning_face:")}
-      />
-      <Emoji
-        text=":slightly_frowning_face:"
-        onClick={() => addEmoji(":slightly_frowning_face:")}
-      />
-      <Emoji text=":crying_face:" onClick={() => addEmoji(":crying_face:")} />
-      <Emoji text=":heart:" onClick={() => addEmoji(":heart:")} />
-      {allUsersOnline.map((data, index) => {
-        return (
-          <Online
-            key={index}
-            username={data.username}
-            typing={data.typing}
-            privateMessage={createMessageOnClick}
-          />
-        );
-      })}
-    </div>
+          <Button pl={9} pr={9} onClick={createMessageOnClick}>
+            Send message
+          </Button>
+        </Flex>
+      </Flex>
+    </Flex>
   );
 }
 
