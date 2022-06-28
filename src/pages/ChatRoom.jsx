@@ -78,6 +78,26 @@ function ChatRoom() {
     return () => socket.off();
   });
 
+  // recieve dirct messages from other users
+  useEffect(() => {
+    socket.on("direct_message", (data) => {
+      const parsedData = JSON.parse(data);
+      setAllMessages((prevItems) => {
+        return [
+          ...prevItems,
+          {
+            message: `Private message: ${parsedData.message}`,
+            room: parsedData.room,
+            username: parsedData.username,
+            timestamp: parsedData.timestamp,
+          },
+        ];
+      });
+    });
+
+    return () => socket.off();
+  });
+
   // indikator for users who are typing in the room
   useEffect(() => {
     socket.on("user_typing", (data) => {
@@ -130,13 +150,14 @@ function ChatRoom() {
     }
   }
 
-  function createMessageOnClick() {
+  function createMessageOnClick(directMessage) {
     if (message !== "") {
       const timestamp = new Date().toLocaleString();
       setAllMessages((prevItems) => {
         return [
           ...prevItems,
           {
+            directMessage: `Private message to: ${directMessage}`,
             message: message,
             room: params.roomId,
             username: username,
@@ -150,7 +171,7 @@ function ChatRoom() {
         username: username,
         timestamp: timestamp,
       });
-      socket.emit("add_message", data);
+      socket.emit("add_message", data, directMessage);
       setMessage("");
     }
   }
@@ -206,6 +227,7 @@ function ChatRoom() {
         return (
           <Message
             key={index}
+            private={data.directMessage}
             message={data.message}
             username={data.username}
             timestamp={data.timestamp}
@@ -236,7 +258,12 @@ function ChatRoom() {
       <Emoji text=":heart:" onClick={() => addEmoji(":heart:")} />
       {allUsersOnline.map((data, index) => {
         return (
-          <Online key={index} username={data.username} typing={data.typing} />
+          <Online
+            key={index}
+            username={data.username}
+            typing={data.typing}
+            privateMessage={createMessageOnClick}
+          />
         );
       })}
     </div>
