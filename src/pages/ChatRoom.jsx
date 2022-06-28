@@ -78,7 +78,7 @@ function ChatRoom() {
     return () => socket.off();
   });
 
-  // recieve dirct messages from other users
+  // recieve direct messages from other users
   useEffect(() => {
     socket.on("direct_message", (data) => {
       const parsedData = JSON.parse(data);
