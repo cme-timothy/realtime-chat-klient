@@ -112,14 +112,22 @@ function Home() {
   }
 
   function createUsernameOnClick() {
-    if (username !== "") {
-      socket.emit("create_user", username);
-    }
+    socket.emit("create_user", username, (response) => {
+      if (response.status !== "ok") {
+        console.log(response.status);
+        setUsername("");
+      }
+    });
   }
 
   function createUsernameOnEnter(event) {
-    if (event.key === "Enter" && username !== "") {
-      socket.emit("create_user", username);
+    if (event.key === "Enter") {
+      socket.emit("create_user", username, (response) => {
+        if (response.status !== "ok") {
+          console.log(response.status);
+          setUsername("");
+        }
+      });
     }
   }
 
