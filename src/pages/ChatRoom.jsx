@@ -188,6 +188,11 @@ function ChatRoom() {
 
   function addEmoji(emoji) {
     setMessage(`${message}${emoji}`);
+    const data = JSON.stringify({
+      room: params.roomId,
+      username: username,
+    });
+    socket.emit("typing_message", data);
   }
 
   return (
