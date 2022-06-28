@@ -60,17 +60,23 @@ function Home() {
         room: room,
         username: username,
       });
-      socket.emit("create_room", stringifyData);
-      setChatRooms((prevItems) => {
-        return [
-          ...prevItems,
-          {
-            room: room,
-          },
-        ];
+      socket.emit("create_room", stringifyData, (response) => {
+        if (response.status === "ok") {
+          setChatRooms((prevItems) => {
+            return [
+              ...prevItems,
+              {
+                room: room,
+              },
+            ];
+          });
+          setRoom("");
+          return navigate(`/chatroom/${room}`);
+        } else {
+          console.log(response.status);
+          setRoom("");
+        }
       });
-      setRoom("");
-      return navigate(`/chatroom/${room}`);
     }
   }
 
@@ -80,17 +86,23 @@ function Home() {
         room: room,
         username: username,
       });
-      socket.emit("create_room", stringifyData);
-      setChatRooms((prevItems) => {
-        return [
-          ...prevItems,
-          {
-            room: room,
-          },
-        ];
+      socket.emit("create_room", stringifyData, (response) => {
+        if (response.status === "ok") {
+          setChatRooms((prevItems) => {
+            return [
+              ...prevItems,
+              {
+                room: room,
+              },
+            ];
+          });
+          setRoom("");
+          return navigate(`/chatroom/${room}`);
+        } else {
+          console.log(response.status);
+          setRoom("");
+        }
       });
-      setRoom("");
-      return navigate(`/chatroom/${room}`);
     }
   }
 
