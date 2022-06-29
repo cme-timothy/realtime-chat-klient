@@ -17,6 +17,7 @@ function ChatRoom() {
   const [username, setUsername] = useRecoilState(user);
   const [allUsersOnline, setAllUsersOnline] = useState([]);
   const messagesEndRef = useRef();
+  const [privateMessage, setPrivateMessage] = useState("");
 
   // get all users who are online in the room and all room messages at start
   useEffect(() => {
@@ -160,16 +161,24 @@ function ChatRoom() {
     }
   }
 
-  function createMessageOnClick(directMessage) {
+  function privateMessageUsername(directMessage) {
+    const name = typeof directMessage;
+    if (name === "string") {
+      setPrivateMessage(directMessage);
+    } else if (name === "boolean") {
+      setPrivateMessage("");
+    }
+  }
+
+  function createMessageOnClick() {
     if (message !== "") {
       const timestamp = new Date().toLocaleString();
-      const name = typeof directMessage;
-      if (name === "string") {
+      if (privateMessage !== "") {
         setAllMessages((prevItems) => {
           return [
             ...prevItems,
             {
-              directMessage: `Private message to: ${directMessage}`,
+              directMessage: `Private message to: ${privateMessage}`,
               message: message,
               room: params.roomId,
               username: username,
@@ -183,7 +192,8 @@ function ChatRoom() {
           username: username,
           timestamp: timestamp,
         });
-        socket.emit("add_message", data, directMessage);
+        socket.emit("add_message", data, privateMessage);
+        setMessage("");
       } else {
         setAllMessages((prevItems) => {
           return [
@@ -203,33 +213,56 @@ function ChatRoom() {
           timestamp: timestamp,
         });
         socket.emit("add_message", data);
+        setMessage("");
       }
-      setMessage("");
     }
   }
 
   function createMessageOnEnter(event) {
     if (event.key === "Enter" && message !== "") {
       const timestamp = new Date().toLocaleString();
-      setAllMessages((prevItems) => {
-        return [
-          ...prevItems,
-          {
-            message: message,
-            room: params.roomId,
-            username: username,
-            timestamp: timestamp,
-          },
-        ];
-      });
-      const data = JSON.stringify({
-        message: message,
-        room: params.roomId,
-        username: username,
-        timestamp: timestamp,
-      });
-      socket.emit("add_message", data);
-      setMessage("");
+      if (privateMessage !== "") {
+        setAllMessages((prevItems) => {
+          return [
+            ...prevItems,
+            {
+              directMessage: `Private message to: ${privateMessage}`,
+              message: message,
+              room: params.roomId,
+              username: username,
+              timestamp: timestamp,
+            },
+          ];
+        });
+        const data = JSON.stringify({
+          message: message,
+          room: params.roomId,
+          username: username,
+          timestamp: timestamp,
+        });
+        socket.emit("add_message", data, privateMessage);
+        setMessage("");
+      } else {
+        setAllMessages((prevItems) => {
+          return [
+            ...prevItems,
+            {
+              message: message,
+              room: params.roomId,
+              username: username,
+              timestamp: timestamp,
+            },
+          ];
+        });
+        const data = JSON.stringify({
+          message: message,
+          room: params.roomId,
+          username: username,
+          timestamp: timestamp,
+        });
+        socket.emit("add_message", data);
+        setMessage("");
+      }
     }
   }
 
@@ -282,7 +315,7 @@ function ChatRoom() {
                 key={index}
                 username={data.username}
                 typing={data.typing}
-                privateMessage={createMessageOnClick}
+                privateMessageUsername={privateMessageUsername}
               />
             );
           })}
