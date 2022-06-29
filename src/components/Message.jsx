@@ -16,9 +16,9 @@ function Message(props) {
 
   function messageToggleColor() {
     if (props.username === username) {
-      return "green.200";
+      return "green.100";
     } else {
-      return "blue.200";
+      return "blue.100";
     }
   }
 
