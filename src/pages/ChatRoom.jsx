@@ -120,7 +120,7 @@ function ChatRoom() {
           {
             room: params.roomId,
             username: parsedData.username,
-            typing: "typing",
+            typing: "Now typing...",
           },
           ...prevItems,
         ];
