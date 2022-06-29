@@ -6,7 +6,7 @@ import Online from "../components/Online";
 import { useRecoilState } from "recoil";
 import { user } from "../Recoil/user/atom";
 import Emoji from "react-emoji-render";
-import { Flex, Button, Input, Box } from "@chakra-ui/react";
+import { Flex, Button, Input, Heading } from "@chakra-ui/react";
 import Profile from "../components/Profile";
 
 function ChatRoom() {
@@ -251,47 +251,69 @@ function ChatRoom() {
   }
 
   return (
-    <Flex bg="yellow.50">
-      <Flex
-        direction="column"
-        w="300px"
-        h="100vh"
-        align="center"
-        borderRight="1px solid"
-        borderColor="blue.100"
-      >
+    <Flex bg="yellow.50" borderBottom="1px solid" borderColor="blue.100">
+      <Flex direction="column" w="400px" align="center">
         <Profile />
+        <Heading borderBottom="1px solid" size="md" m={7} mb={0} as="h3">
+          Online
+        </Heading>
+        <Flex
+          direction="column"
+          alignItems="center"
+          h="60vh"
+          w="100%"
+          overflowY="auto"
+          overflow="overlay"
+          sx={{
+            "&::-webkit-scrollbar": {
+              width: "16px",
+              borderRadius: "5px",
+              backgroundColor: "gray.100",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              borderRadius: "5px",
+              backgroundColor: "blue.200",
+            },
+          }}
+        >
+          {allUsersOnline.map((data, index) => {
+            return (
+              <Online
+                key={index}
+                username={data.username}
+                typing={data.typing}
+                privateMessage={createMessageOnClick}
+              />
+            );
+          })}
+        </Flex>
+        <Flex flex={1} />
         <Link key={params.roomId} to={"/"}>
           <Button w="80%" m={3} onClick={() => leaveRoom(params.roomId)}>
             Leave room
           </Button>
         </Link>
-        {allUsersOnline.map((data, index) => {
-          return (
-            <Online
-              key={index}
-              username={data.username}
-              typing={data.typing}
-              privateMessage={createMessageOnClick}
-            />
-          );
-        })}
       </Flex>
-      <Flex w="80%" direction="column">
+      <Flex
+        w="80%"
+        direction="column"
+        borderLeft="1px solid"
+        borderColor="blue.100"
+      >
         <Flex
           id="newMessage"
           direction="column"
-          h="80vh"
+          h="70vh"
           mt={8}
-          overflowY="scroll"
+          overflowY="auto"
           sx={{
-            '&::-webkit-scrollbar': {
-              width: '16px',
-              borderRadius: '5px',
+            "&::-webkit-scrollbar": {
+              width: "16px",
+              borderRadius: "5px",
               backgroundColor: "gray.100",
             },
-            '&::-webkit-scrollbar-thumb': {
-              borderRadius: '5px',
+            "&::-webkit-scrollbar-thumb": {
+              borderRadius: "5px",
               backgroundColor: "blue.200",
             },
           }}

@@ -10,7 +10,7 @@ function Online(props) {
   }
 
   return (
-    <Flex w="100%" h="80px" align="center">
+    <Flex minHeight="80px" align="center" w="300px">
       <Avatar bg={nowTypingAvatar} src="" mr="15px" ml="10px" />
       <Flex direction="column">
         <Text

@@ -5,6 +5,7 @@ import { Helmet } from "react-helmet-async";
 import { useRecoilState } from "recoil";
 import { user } from "../Recoil/user/atom";
 import ChatRoomLink from "../components/chatRoomLink";
+import { Flex, Input, Button, Heading, Text } from "@chakra-ui/react";
 
 function Home() {
   const socket = useContext(SocketContext);
@@ -132,38 +133,39 @@ function Home() {
   }
 
   return (
-    <div>
+    <Flex direction="column" align="center" bg="yellow.50">
       <Helmet>
         <title>Free and open chat rooms - Chatty Chatty Bang Bang</title>
       </Helmet>
-      <h1>Welcome to Chatty Chatty Bang Bang</h1>
-      <h2>
+      <Text>
         A free and open chat platform. Talk to anyone from anywhere either in
         public rooms or private rooms. Join or create a chat room and be chatty
         &#128540;
-      </h2>
-      <input
+      </Text>
+      <Input
         placeholder="..."
         type="text"
         onChange={handleUsernameChange}
         onKeyDown={createUsernameOnEnter}
         value={username}
       />
-      <button onClick={createUsernameOnClick}>Create name</button>
-      <input
+      <Button onClick={createUsernameOnClick}>Create name</Button>
+      <Input
         placeholder="..."
         type="text"
         onChange={handleRoomChange}
         onKeyDown={createRoomOnEnter}
         value={room}
       />
-      <button onClick={createRoomOnClick}>Create room</button>
+      <Button onClick={createRoomOnClick}>Create room</Button>
 
-      <h3>All available rooms:</h3>
+      <Heading as="h2" size="md">
+        All available rooms:
+      </Heading>
       {chatRooms.map((data, index) => {
         return <ChatRoomLink key={index} room={data.room} />;
       })}
-    </div>
+    </Flex>
   );
 }
 
