@@ -320,7 +320,6 @@ function ChatRoom() {
             );
           })}
         </Flex>
-        <Flex flex={1} />
         <Link key={params.roomId} to={"/"}>
           <Button w="80%" m={3} onClick={() => leaveRoom(params.roomId)}>
             Leave room

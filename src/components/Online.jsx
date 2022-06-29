@@ -15,7 +15,7 @@ function Online(props) {
 
   function privateMessage() {
     if (privateToggle === true) {
-      setMessage("Type private message...");
+      setMessage("Type direct message...");
     } else if (privateToggle === false) {
       setMessage("");
       props.privateMessageUsername(false);
@@ -25,6 +25,7 @@ function Online(props) {
 
   return (
     <Flex
+      _hover={{ cursor: "pointer" }}
       minHeight="80px"
       align="center"
       w="300px"
@@ -34,7 +35,10 @@ function Online(props) {
       }}
     >
       <Avatar bg={nowTypingAvatar} src="" mr="15px" ml="10px" />
-      <Flex direction="column">
+      <Flex
+        direction="column"
+        _hover={{ cursor: "pointer", color: "blue.500" }}
+      >
         <Text>{props.username}</Text>
         <Text>{props.typing}</Text>
         <Text>{message}</Text>
