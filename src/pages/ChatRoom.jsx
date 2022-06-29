@@ -205,7 +205,6 @@ function ChatRoom() {
         socket.emit("add_message", data);
       }
       setMessage("");
-      console.log("inside");
     }
   }
 
