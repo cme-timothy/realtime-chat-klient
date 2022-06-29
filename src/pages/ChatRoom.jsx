@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext, useEffect, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import SocketContext from "../context/socket";
 import Message from "../components/Message";
@@ -6,7 +6,7 @@ import Online from "../components/Online";
 import { useRecoilState } from "recoil";
 import { user } from "../Recoil/user/atom";
 import Emoji from "react-emoji-render";
-import { Flex, Button, Input } from "@chakra-ui/react";
+import { Flex, Button, Input, Box } from "@chakra-ui/react";
 import Profile from "../components/Profile";
 
 function ChatRoom() {
@@ -16,6 +16,7 @@ function ChatRoom() {
   const [allMessages, setAllMessages] = useState([]);
   const [username, setUsername] = useRecoilState(user);
   const [allUsersOnline, setAllUsersOnline] = useState([]);
+  const messagesEndRef = useRef();
 
   // get all users who are online in the room and all room messages at start
   useEffect(() => {
@@ -79,6 +80,13 @@ function ChatRoom() {
 
     return () => socket.off();
   });
+
+  // scroll to bottom of chat room for new messages and when joining room
+  useEffect(scrollToBottom, [allMessages]);
+
+  function scrollToBottom() {
+    messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+  }
 
   // recieve direct messages from other users
   useEffect(() => {
@@ -271,18 +279,37 @@ function ChatRoom() {
         })}
       </Flex>
       <Flex w="80%" direction="column">
-        {allMessages.map((data, index) => {
-          return (
-            <Message
-              key={index}
-              private={data.directMessage}
-              message={data.message}
-              username={data.username}
-              timestamp={data.timestamp}
-            />
-          );
-        })}
-        <Flex flex={1}></Flex>
+        <Flex
+          id="newMessage"
+          direction="column"
+          h="80vh"
+          mt={8}
+          overflowY="scroll"
+          sx={{
+            '&::-webkit-scrollbar': {
+              width: '16px',
+              borderRadius: '5px',
+              backgroundColor: "gray.100",
+            },
+            '&::-webkit-scrollbar-thumb': {
+              borderRadius: '5px',
+              backgroundColor: "blue.200",
+            },
+          }}
+        >
+          {allMessages.map((data, index) => {
+            return (
+              <Message
+                key={index}
+                private={data.directMessage}
+                message={data.message}
+                username={data.username}
+                timestamp={data.timestamp}
+              />
+            );
+          })}
+          <div ref={messagesEndRef} />
+        </Flex>
         <Flex>
           <Button bg={0} ml={5} pl={1} pr={1} size="sm">
             <Emoji text=":thumbs_up:" onClick={() => addEmoji(":thumbs_up:")} />

@@ -1,13 +1,45 @@
+import { Flex, Text } from "@chakra-ui/react";
 import Emoji from "react-emoji-render";
+import { useRecoilValue } from "recoil";
+import { user } from "../Recoil/user/atom";
 
 function Message(props) {
+  const username = useRecoilValue(user);
+
+  function messageTogglePosition() {
+    if (props.username === username) {
+      return "flex-end";
+    } else {
+      return "flex-start";
+    }
+  }
+
+  function messageToggleColor() {
+    if (props.username === username) {
+      return "green.200";
+    } else {
+      return "blue.200";
+    }
+  }
+
   return (
-    <div>
-      <h4>{props.username}</h4>
-      <h4>{props.private}</h4>
+    <Flex
+      bg={messageToggleColor}
+      w="fit-content"
+      minWidth="100px"
+      p={3}
+      m={2}
+      ml={7}
+      mr={7}
+      borderRadius="10px"
+      direction="column"
+      alignSelf={messageTogglePosition}
+    >
+      <Text>{props.username}</Text>
+      <Text>{props.private}</Text>
       <Emoji text={props.message} />
-      <h4>{props.timestamp}</h4>
-    </div>
+      <Text>{props.timestamp}</Text>
+    </Flex>
   );
 }
 
