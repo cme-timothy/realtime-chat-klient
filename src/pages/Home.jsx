@@ -130,25 +130,7 @@ function Home() {
   }
 
   function createUsernameOnClick() {
-    socket.emit("create_user", valueUsername, (response) => {
-      if (response.status === "Name is taken.") {
-        setNameStatus(response.status);
-        setNameError(true);
-        setValueUsername("");
-      } else if (response.status === "Name is empty.") {
-        setNameStatus(response.status);
-        setNameError(true);
-        setValueUsername("");
-      } else {
-        setNameError(false);
-        setUsername(valueUsername);
-        setValueUsername("");
-      }
-    });
-  }
-
-  function createUsernameOnEnter(event) {
-    if (event.key === "Enter") {
+    if (username === "") {
       socket.emit("create_user", valueUsername, (response) => {
         if (response.status === "Name is taken.") {
           setNameStatus(response.status);
@@ -164,6 +146,34 @@ function Home() {
           setValueUsername("");
         }
       });
+    } else {
+      setNameStatus("Name is already created.");
+      setNameError(true);
+      setValueUsername("");
+    }
+  }
+
+  function createUsernameOnEnter(event) {
+    if (event.key === "Enter" && username === "") {
+      socket.emit("create_user", valueUsername, (response) => {
+        if (response.status === "Name is taken.") {
+          setNameStatus(response.status);
+          setNameError(true);
+          setValueUsername("");
+        } else if (response.status === "Name is empty.") {
+          setNameStatus(response.status);
+          setNameError(true);
+          setValueUsername("");
+        } else {
+          setNameError(false);
+          setUsername(valueUsername);
+          setValueUsername("");
+        }
+      });
+    } else if (event.key === "Enter") {
+      setNameStatus("Name is already created.");
+      setNameError(true);
+      setValueUsername("");
     }
   }
 

@@ -56,7 +56,6 @@ You don't have to ever use `eject`. The curated feature set is suitable for smal
 
 ### Priority
 
-- restrict one username for each socket.id "crash"
 - restrict inroom unique username "crash"
 - create more components in home and chatroom
 
