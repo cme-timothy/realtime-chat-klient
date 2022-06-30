@@ -15,6 +15,8 @@ import {
   FormControl,
   FormHelperText,
   FormErrorMessage,
+  SimpleGrid,
+  Box,
 } from "@chakra-ui/react";
 
 function Home() {
@@ -167,80 +169,91 @@ function Home() {
   }
 
   return (
-    <Flex direction="column" bg="yellow.50" align="center">
-      <Helmet>
-        <title>Free and open chat rooms - Chatty Chatty Bang Bang</title>
-      </Helmet>
-      <Heading mt="50px">{`Your name: ${username}`}</Heading>
-      <Flex direction="column" w="400px">
-        <FormControl isInvalid={nameError}>
-          <Flex align="center" mt={12} mb={3}>
-            <FormLabel htmlFor="name" fontSize="2xl" mb={0}>
-              Create Name
-            </FormLabel>
-            <Text color="gray.500" fontStyle="italic">
-              (optional)
-            </Text>
-          </Flex>
-          <Input
-            m="auto"
-            id="name"
-            placeholder="..."
-            type="text"
-            onChange={handleUsernameChange}
-            onKeyDown={createUsernameOnEnter}
-            value={valueUsername}
-          />
-          {!nameError ? (
-            <FormHelperText>
-              Enter the name you'd like to use in chatrooms.
-            </FormHelperText>
-          ) : (
-            <FormErrorMessage>{nameStatus}</FormErrorMessage>
-          )}
-          <Button w="100%" mt={5} mb={5} onClick={createUsernameOnClick}>
-            Create name
-          </Button>
-        </FormControl>
+    <Box bg="yellow.50">
+      <Flex direction="column" align="center">
+        <Helmet>
+          <title>Free and open chat rooms - Chatty Chatty Bang Bang</title>
+        </Helmet>
+        <Heading mt="50px">{`Your name: ${username}`}</Heading>
+        <Flex direction="column" w="400px">
+          <FormControl isInvalid={nameError}>
+            <Flex align="center" mt={12} mb={3}>
+              <FormLabel htmlFor="name" fontSize="2xl" mb={0}>
+                Create Name
+              </FormLabel>
+              <Text color="gray.500" fontStyle="italic">
+                (optional)
+              </Text>
+            </Flex>
+            <Input
+              bg="white"
+              _hover={{ borderColor: "blue.300" }}
+              borderColor="blue.100"
+              m="auto"
+              id="name"
+              placeholder="..."
+              type="text"
+              onChange={handleUsernameChange}
+              onKeyDown={createUsernameOnEnter}
+              value={valueUsername}
+            />
+            {!nameError ? (
+              <FormHelperText>
+                Enter the name you'd like to use in chatrooms.
+              </FormHelperText>
+            ) : (
+              <FormErrorMessage>{nameStatus}</FormErrorMessage>
+            )}
+            <Button w="100%" mt={5} mb={5} onClick={createUsernameOnClick}>
+              Create name
+            </Button>
+          </FormControl>
 
-        <FormControl isInvalid={roomError}>
-          <Flex align="center" mb={3}>
-            <FormLabel htmlFor="roomName" fontSize="2xl" mb={0}>
-              Create Room
-            </FormLabel>
-            <Text color="gray.500" fontStyle="italic">
-              (optional)
-            </Text>
-          </Flex>
-          <Input
-            m="auto"
-            id="roomName"
-            placeholder="..."
-            type="text"
-            onChange={handleRoomChange}
-            onKeyDown={createRoomOnEnter}
-            value={room}
-          />
-          {!roomError ? (
-            <FormHelperText>
-              Enter the name of the room you'd like to create.
-            </FormHelperText>
-          ) : (
-            <FormErrorMessage>Room name is taken.</FormErrorMessage>
-          )}
-          <Button w="100%" mt={5} mb={5} onClick={createRoomOnClick}>
-            Create room
-          </Button>
-        </FormControl>
+          <FormControl isInvalid={roomError}>
+            <Flex align="center" mb={3}>
+              <FormLabel htmlFor="roomName" fontSize="2xl" mb={0}>
+                Create Room
+              </FormLabel>
+              <Text color="gray.500" fontStyle="italic">
+                (optional)
+              </Text>
+            </Flex>
+            <Input
+              bg="white"
+              _hover={{ borderColor: "blue.300" }}
+              mr={3}
+              borderColor="blue.100"
+              m="auto"
+              id="roomName"
+              placeholder="..."
+              type="text"
+              onChange={handleRoomChange}
+              onKeyDown={createRoomOnEnter}
+              value={room}
+            />
+            {!roomError ? (
+              <FormHelperText>
+                Enter the name of the room you'd like to create.
+              </FormHelperText>
+            ) : (
+              <FormErrorMessage>Room name is taken.</FormErrorMessage>
+            )}
+            <Button w="100%" mt={5} mb={5} onClick={createRoomOnClick}>
+              Create room
+            </Button>
+          </FormControl>
+        </Flex>
+
+        <Heading mt={5} as="h3" size="md">
+          All available rooms:
+        </Heading>
       </Flex>
-
-      <Heading mt={5} as="h3" size="md">
-        All available rooms:
-      </Heading>
-      {chatRooms.map((data, index) => {
-        return <ChatRoomLink key={index} room={data.room} />;
-      })}
-    </Flex>
+      <Flex justifyContent="center" wrap="wrap" gap="20px">
+        {chatRooms.map((data, index) => {
+          return <ChatRoomLink key={index} room={data.room} />;
+        })}
+      </Flex>
+    </Box>
   );
 }
 
