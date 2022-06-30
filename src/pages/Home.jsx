@@ -5,7 +5,17 @@ import { Helmet } from "react-helmet-async";
 import { useRecoilState } from "recoil";
 import { user } from "../Recoil/user/atom";
 import ChatRoomLink from "../components/chatRoomLink";
-import { Flex, Input, Button, Heading, Text } from "@chakra-ui/react";
+import {
+  Flex,
+  Input,
+  Button,
+  Heading,
+  Text,
+  FormLabel,
+  FormControl,
+  FormHelperText,
+  FormErrorMessage,
+} from "@chakra-ui/react";
 
 function Home() {
   const socket = useContext(SocketContext);
@@ -13,6 +23,10 @@ function Home() {
   const [room, setRoom] = useState("");
   const [username, setUsername] = useRecoilState(user);
   const navigate = useNavigate();
+  const [nameError, setNameError] = useState(false);
+  const [nameStatus, setNameStatus] = useState("");
+  const [valueUsername, setValueUsername] = useState("");
+  const [roomError, setRoomError] = useState(false);
 
   // get all rooms at start and when page refreshes
   useEffect(() => {
@@ -71,10 +85,11 @@ function Home() {
               },
             ];
           });
+          setRoomError(false);
           setRoom("");
           return navigate(`/chatroom/${room}`);
         } else {
-          console.log(response.status);
+          setRoomError(true);
           setRoom("");
         }
       });
@@ -97,10 +112,11 @@ function Home() {
               },
             ];
           });
+          setRoomError(false);
           setRoom("");
           return navigate(`/chatroom/${room}`);
         } else {
-          console.log(response.status);
+          setRoomError(true);
           setRoom("");
         }
       });
@@ -109,57 +125,116 @@ function Home() {
 
   function handleUsernameChange(event) {
     const value = event.target.value;
-    setUsername(value);
+    setValueUsername(value);
   }
 
   function createUsernameOnClick() {
-    socket.emit("create_user", username, (response) => {
-      if (response.status !== "ok") {
-        console.log(response.status);
-        setUsername("");
+    socket.emit("create_user", valueUsername, (response) => {
+      if (response.status === "Name is taken.") {
+        setNameStatus(response.status);
+        setNameError(true);
+        setValueUsername("");
+      } else if (response.status === "Name is empty.") {
+        setNameStatus(response.status);
+        setNameError(true);
+        setValueUsername("");
+      } else {
+        setNameError(false);
+        setUsername(valueUsername);
+        setValueUsername("");
       }
     });
   }
 
   function createUsernameOnEnter(event) {
     if (event.key === "Enter") {
-      socket.emit("create_user", username, (response) => {
-        if (response.status !== "ok") {
-          console.log(response.status);
-          setUsername("");
+      socket.emit("create_user", valueUsername, (response) => {
+        if (response.status === "Name is taken.") {
+          setNameStatus(response.status);
+          setNameError(true);
+          setValueUsername("");
+        } else if (response.status === "Name is empty.") {
+          setNameStatus(response.status);
+          setNameError(true);
+          setValueUsername("");
+        } else {
+          setNameError(false);
+          setUsername(valueUsername);
+          setValueUsername("");
         }
       });
     }
   }
 
   return (
-    <Flex direction="column" align="center" bg="yellow.50">
+    <Flex direction="column" bg="yellow.50" align="center">
       <Helmet>
         <title>Free and open chat rooms - Chatty Chatty Bang Bang</title>
       </Helmet>
-      <Text>
-        A free and open chat platform. Talk to anyone from anywhere either in
-        public rooms or private rooms. Join or create a chat room and be chatty
-        &#128540;
-      </Text>
-      <Input
-        placeholder="..."
-        type="text"
-        onChange={handleUsernameChange}
-        onKeyDown={createUsernameOnEnter}
-        value={username}
-      />
-      <Button onClick={createUsernameOnClick}>Create name</Button>
-      <Input
-        placeholder="..."
-        type="text"
-        onChange={handleRoomChange}
-        onKeyDown={createRoomOnEnter}
-        value={room}
-      />
-      <Button onClick={createRoomOnClick}>Create room</Button>
+      <Heading mt="50px">{`Your name: ${username}`}</Heading>
+      <Flex direction="column" w="400px">
+        <FormControl isInvalid={nameError}>
+          <Flex align="center" mt={12} mb={3}>
+            <FormLabel htmlFor="name" fontSize="2xl" mb={0}>
+              Create Name
+            </FormLabel>
+            <Text color="gray.500" fontStyle="italic">
+              (optional)
+            </Text>
+          </Flex>
+          <Input
+            m="auto"
+            id="name"
+            placeholder="..."
+            type="text"
+            onChange={handleUsernameChange}
+            onKeyDown={createUsernameOnEnter}
+            value={valueUsername}
+          />
+          {!nameError ? (
+            <FormHelperText>
+              Enter the name you'd like to use in chatrooms.
+            </FormHelperText>
+          ) : (
+            <FormErrorMessage>{nameStatus}</FormErrorMessage>
+          )}
+          <Button w="100%" mt={5} mb={5} onClick={createUsernameOnClick}>
+            Create name
+          </Button>
+        </FormControl>
 
-      <Heading as="h2" size="md">
+        <FormControl isInvalid={roomError}>
+          <Flex align="center" mb={3}>
+            <FormLabel htmlFor="roomName" fontSize="2xl" mb={0}>
+              Create Room
+            </FormLabel>
+            <Text color="gray.500" fontStyle="italic">
+              (optional)
+            </Text>
+          </Flex>
+          <Input
+            m="auto"
+            id="roomName"
+            placeholder="..."
+            type="text"
+            onChange={handleRoomChange}
+            onKeyDown={createRoomOnEnter}
+            value={room}
+          />
+          {!roomError ? (
+            <FormHelperText>
+              Enter the name of the room you'd like to create.
+            </FormHelperText>
+          ) : (
+            <FormErrorMessage>Room name is taken.</FormErrorMessage>
+          )}
+          <Button w="100%" mt={5} mb={5} onClick={createRoomOnClick}>
+            Create room
+          </Button>
+        </FormControl>
+      </Flex>
+
+      <Heading mt={5} as="h3" size="md">
         All available rooms:
       </Heading>
       {chatRooms.map((data, index) => {
