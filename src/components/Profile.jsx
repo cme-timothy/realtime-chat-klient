@@ -7,16 +7,14 @@ function Profile() {
 
   return (
     <Flex
+      bg="white"
       w="100%"
       h="80px"
       borderBottom="1px solid"
       borderColor="blue.100"
       justifyContent="center"
     >
-      <Flex
-        align="center"
-        w="300px"
-      >
+      <Flex align="center" w="300px">
         <Avatar src="" mr="15px" ml="10px" />
         <Text>{username}</Text>
       </Flex>

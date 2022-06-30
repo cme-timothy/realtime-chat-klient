@@ -293,7 +293,7 @@ function ChatRoom() {
         <Flex
           direction="column"
           alignItems="center"
-          h="60vh"
+          h="68vh"
           w="100%"
           overflowY="auto"
           overflow="overlay"
@@ -320,6 +320,7 @@ function ChatRoom() {
             );
           })}
         </Flex>
+        <Flex flex={1} />
         <Link key={params.roomId} to={"/"}>
           <Button w="80%" m={3} onClick={() => leaveRoom(params.roomId)}>
             Leave room
@@ -327,11 +328,22 @@ function ChatRoom() {
         </Link>
       </Flex>
       <Flex
-        w="80%"
+        w="100%"
         direction="column"
         borderLeft="1px solid"
         borderColor="blue.100"
       >
+        <Flex
+          bg="white"
+          w="100%"
+          h="80px"
+          borderBottom="1px solid"
+          borderColor="blue.100"
+          align="center"
+          justifyContent="center"
+        >
+          <Heading as="h2" size="lg">{`Chatroom: ${params.roomId}`}</Heading>
+        </Flex>
         <Flex
           id="newMessage"
           direction="column"
@@ -362,8 +374,9 @@ function ChatRoom() {
             );
           })}
           <div ref={messagesEndRef} />
+          <Flex flex={1} />
         </Flex>
-        <Flex>
+        <Flex mt={2}>
           <Button bg={0} ml={5} pl={1} pr={1} size="sm">
             <Emoji text=":thumbs_up:" onClick={() => addEmoji(":thumbs_up:")} />
           </Button>
@@ -406,6 +419,7 @@ function ChatRoom() {
         </Flex>
         <Flex ml={3} mr={3} mb={3}>
           <Input
+            bg="white"
             _hover={{ borderColor: "blue.300" }}
             mr={3}
             borderColor="blue.100"
