@@ -8,7 +8,7 @@ import Header from "./components/Header";
 import { ChakraProvider } from "@chakra-ui/react";
 import Footer from "./components/Footer";
 
-const socket = io(process.env.REACT_APP_BACKEND_URL);
+const socket = io(process.env.REACT_APP_BACKEND_URL || "http://localhost:4000");
 
 function App() {
   return (
